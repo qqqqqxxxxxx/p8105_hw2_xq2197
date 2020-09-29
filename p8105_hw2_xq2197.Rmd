@@ -7,6 +7,7 @@ output: github_document
 ```{r setup}
 library(tidyverse)
 library(readxl)
+library(dplyr)
 ```
 
 ## Problem 1
@@ -59,5 +60,21 @@ precip_df =
 mutate(month = month.name[month])
 precip_df
 ```
+Data description:
 
 This dataset contains information from the Mr. Trashwheel trash collector in Baltimore, Maryland. When trash enters the inner harbor, the trashwheel collects the trash and stores it in a dumpster. The dataset contains information on year, month, and the amount and types of trash collected. There are `r nrow(trashwheel_df)` observations in the Mr. Trash Wheel sheet. Key variables include month, year, the weight of dumpster in tons, and the amount of some specific types of trash such as plastic bottles and sports balls. There are `r nrow(precip_df)` observations in the precipitation dataset. Key variables include year, month, and precipitation. From available data, the total precipitation in 2018 was `r sum(precip_2018$total)`, and the median number of sports balls in a dumpster in 2017 was `r median(subset(trashwheel_df,year==2017)$sports_balls)`.
+
+## Problem 2
+
+Read and clean the data.
+
+```{r}
+entrance_df =
+  read_csv(file="./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
+janitor::clean_names() %>%
+select(line:route11,entry,vending,entrance_type,ada) %>%
+mutate(entry=recode(entry,"YES"=TRUE,"NO"=FALSE))
+```
+
+Data description:
+The dataset contains line, station_name, station latitude and longtitude, routes served, entry, vending, entrance type, and ADA compliance. So far I imported the datafile, transformed all of the variable names to lowercase letters, selected relevant variables, and mutated character values in the entry variable to logical values. The dataset contains `r nrow(entrance_df)` rows and `r ncol(entrance_df)` columns. The dataset is not tidy since columns from route1 to route11 are not variables but values.
