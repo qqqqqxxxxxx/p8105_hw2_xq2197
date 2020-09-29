@@ -10,3 +10,54 @@ library(readxl)
 ```
 
 ## Problem 1
+
+Read the Mr. Trashwheel dataset.
+
+```{r}
+trashwheel_df=
+  read_xlsx("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+            sheet="Mr. Trash Wheel",
+            range=cell_cols("A:N")) %>%
+janitor::clean_names() %>%
+drop_na(dumpster) %>%
+mutate(
+  sports_balls = round(sports_balls),
+  sports_balls = as.integer(sports_balls))
+```
+
+Read the precipitation data for 2017 and 2018.
+
+```{r}
+precip_2017 =
+  read_xlsx(
+    "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+    sheet = "2017 Precipitation",
+    skip = 1
+  ) %>%
+janitor::clean_names() %>%
+drop_na(month) %>%
+mutate(year = 2017) %>%
+relocate(year)
+
+precip_2018 =
+  read_xlsx(
+    "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+    sheet = "2018 Precipitation",
+    skip = 1
+  ) %>%
+janitor::clean_names() %>%
+drop_na(month) %>%
+mutate(year = 2018) %>%
+relocate(year)
+```
+
+Now combine annual precipitation.
+
+```{r}
+precip_df = 
+  bind_rows(precip_2017, precip_2018) %>%
+mutate(month = month.name[month])
+precip_df
+```
+
+This dataset contains information from the Mr. Trashwheel trash collector in Baltimore, Maryland. When trash enters the inner harbor, the trashwheel collects the trash and stores it in a dumpster. The dataset contains information on year, month, and the amount and types of trash collected. There are `r nrow(trashwheel_df)` observations in the Mr. Trash Wheel sheet. Key variables include month, year, the weight of dumpster in tons, and the amount of some specific types of trash such as plastic bottles and sports balls. There are `r nrow(precip_df)` observations in the precipitation dataset. Key variables include year, month, and precipitation. From available data, the total precipitation in 2018 was`r `, and the median number of sports balls in a dumpster in 2017 was`r`.
