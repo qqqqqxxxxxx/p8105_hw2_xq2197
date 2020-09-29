@@ -69,7 +69,7 @@ This dataset contains information from the Mr. Trashwheel trash collector in Bal
 Read and clean the data.
 
 ```{r}
-entrance_df =
+station_df =
   read_csv(file="./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
 janitor::clean_names() %>%
 select(line:route11,entry,vending,entrance_type,ada) %>%
@@ -77,4 +77,27 @@ mutate(entry=recode(entry,"YES"=TRUE,"NO"=FALSE))
 ```
 
 Data description:
-The dataset contains line, station_name, station latitude and longtitude, routes served, entry, vending, entrance type, and ADA compliance. So far I imported the datafile, transformed all of the variable names to lowercase letters, selected relevant variables, and mutated character values in the entry variable to logical values. The dataset contains `r nrow(entrance_df)` rows and `r ncol(entrance_df)` columns. The dataset is not tidy since columns from route1 to route11 are not variables but values.
+The dataset contains line, station_name, station latitude and longtitude, routes served, entry, vending, entrance type, and ADA compliance. So far I imported the datafile, transformed all of the variable names to lowercase letters, selected relevant variables, and mutated character values in the entry variable to logical values. The dataset contains `r nrow(station_df)` rows and `r ncol(station_df)` columns. The dataset is not tidy since columns from route1 to route11 are not variables but values.
+
+Problem 2 a)
+
+```{r include=FALSE}
+disstation_df = distinct(select(station_df,station_name,line,ada))
+```
+
+There are `r nrow(disstation_df)` distinct stations here in NYC.
+
+Problem 2 b)
+
+There are `r nrow(filter(disstation_df,ada==TRUE))` stations that are ADA compliant.
+
+Problem 2 c)
+
+The proportion of station entrances/exits without vending allow entrance is `r nrow(filter(station_df,vending=="NO",entry==TRUE))/nrow(filter(station_df,vending=="NO"))`.
+
+Reformat data.
+
+```{r}
+
+```
+
