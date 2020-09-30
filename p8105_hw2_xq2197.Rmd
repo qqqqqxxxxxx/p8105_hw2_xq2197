@@ -155,7 +155,8 @@ snp_df=
     month = month.name[as.integer(month)],
     day = as.integer(day)) %>%
 relocate(year, month) %>%
-arrange(year, month)
+arrange(year, month) %>%
+select(-day)
 ```
 
 Third, tidy the unemployment data.
@@ -182,3 +183,19 @@ unemployment_tidy_month_df =
   relocate(year,month_name) %>%
   select(year,month=month_name,percentage)
 ```
+
+Merge snp into pols, and merge unemployment.
+
+```{r}
+pols_snp = 
+  left_join(polsmonth_df,snp_df,by = c("year"="year","month"="month"))
+pols_snp_unem =
+  left_join(pols_snp,unemployment_tidy_month_df,by = c("year"="year","month"="month"))
+```
+
+Describe each dataset:
+The dataset polsmonth_df contains 822 observations of 9 variables related to the number of national politicians who are democratic or republican at any given time, such as the number of governors/senators/representatives of a certain political party. The range of years is `r min(pull(polsmonth_df,year))` and `r max(pull(polsmonth_df,year))`.
+
+The dataset snp_df contains 787 observations of 3 variables related to Standard & Poor's stock market index, including year, month, and close (the closing values of the S&P stock index). The range of years is `r min(pull(snp_df,year))` and `r max(pull(snp_df,year))`.
+
+The dataset unemployment_tidy_month_df contains 804 observations of 3 variables, including year, month, and the percentage of unemployment at a certain time. The range of years is `r min(pull(unemployment_tidy_month_df,year))` and `r max(pull(unemployment_tidy_month_df,year))`.
