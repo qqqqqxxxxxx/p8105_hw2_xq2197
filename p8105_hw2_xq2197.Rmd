@@ -121,3 +121,23 @@ a_disstation = distinct(select(station_df_tidy,station_name,line,route_name,ada)
 There are `r nrow(a_disstation)` distinct stations serving the A train.
 
 Of those stations that serve A train, `r nrow(filter(a_disstation, ada==TRUE))` are ADA compliant.
+
+## Problem 3
+
+Read and clean pols-month.
+
+```{r}
+polsmonth_df=
+  read_csv(file ="./data/pols-month.csv") %>%
+  janitor::clean_names() %>%
+  drop_na() %>%
+  separate(mon,c("year","month","day")) %>%
+  mutate(year =
+           as.integer(year),
+         month=month.name[as.integer(month)],
+         day = as.integer(day),
+         president = case_when(
+           prez_gop == 1 ~ "gop",
+           prez_dem == 1 ~ "dem")) %>%
+  select(-prez_dem,-prez_gop,-day)
+```
