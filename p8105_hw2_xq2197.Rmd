@@ -99,5 +99,25 @@ Reformat data.
 
 ```{r}
 
+station_df_char = 
+  mutate(station_df, route8 = as.character(route8),  route9 = as.character(route9), route10 = as.character(route10), route11 = as.character(route11))
+station_df_tidy = 
+  pivot_longer(
+    station_df_char,
+    route1:route11,
+    names_to = "route_num",
+    values_to = "route_name"
+  ) %>%
+  drop_na()
 ```
 
+Calculate the number of distinct stations serving the A train.
+
+```{r}
+a_disstation = distinct(select(station_df_tidy,station_name,line,route_name,ada)) %>%
+  filter(route_name=="A")
+```
+
+There are `r nrow(a_disstation)` distinct stations serving the A train.
+
+Of those stations that serve A train, `r nrow(filter(a_disstation, ada==TRUE))` are ADA compliant.
