@@ -124,7 +124,7 @@ Of those stations that serve A train, `r nrow(filter(a_disstation, ada==TRUE))` 
 
 ## Problem 3
 
-Read and clean pols-month.
+First, read and clean pols-month.
 
 ```{r}
 polsmonth_df=
@@ -140,4 +140,45 @@ polsmonth_df=
            prez_gop == 1 ~ "gop",
            prez_dem == 1 ~ "dem")) %>%
   select(-prez_dem,-prez_gop,-day)
+```
+
+Second, read and clean snp.csv.
+
+```{r}
+snp_df=
+  read_csv(file ="./data/snp.csv") %>%
+  janitor::clean_names() %>%
+  drop_na() %>%
+  separate(date,c("month","day","year")) %>%
+  mutate(
+    year = as.integer(year),
+    month = month.name[as.integer(month)],
+    day = as.integer(day)) %>%
+relocate(year, month) %>%
+arrange(year, month)
+```
+
+Third, tidy the unemployment data.
+
+```{r}
+unemployment_df=
+  read_csv(file ="./data/unemployment.csv") %>%
+  janitor::clean_names() %>%
+  drop_na()
+unemployment_tidy_df = 
+  pivot_longer(
+    unemployment_df,
+    jan:dec,
+    names_to = "month",
+    values_to = "percentage")
+month_df = 
+  tibble(
+    month = c("jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"),
+    month_name = month.name
+  )
+unemployment_tidy_month_df = 
+  left_join(unemployment_tidy_df,month_df,by = "month") %>%
+  select(-month) %>%
+  relocate(year,month_name) %>%
+  select(year,month=month_name,percentage)
 ```
